@@ -117,3 +117,82 @@ def countUrl(request):
     else:
         data = bad_data
     return JsonResponse(data, status = 400)
+
+
+@csrf_exempt
+def shortUrls(request):
+    data = {}
+    if request.method == 'POST':
+        requestData = JSONParser().parse(request)
+        invalid_urls = []
+        valid_urls = {}
+        long_urls = requestData['long_urls']
+        for url in long_urls:
+            if not validateUrl(url):
+                invalid_urls.append(url)
+        if len(invalid_urls) > 0:
+            data =  {
+                    "invalid_urls" : invalid_urls,
+                    "status": "FAILED",
+                    "status_codes": ["INVALID_URLS"]
+                }
+        else:
+            for url in long_urls:
+                smallurl = hashCode()
+                sd = {
+                    'long_url': url,
+                    'short_url': smallurl
+                }
+                newUrl = Shorturlserializer(data = sd)
+                if newUrl.is_valid():
+                    newUrl.save()
+                    valid_urls[url] = 'http://'+request.META['HTTP_HOST']+'/'+smallurl+'/'
+            data = {
+                "short_urls": valid_urls,
+                "invalid_urls" : [],
+                "status": "OK",
+                "status_codes": []
+            }      
+        return JsonResponse(data, status = 200)
+    else:
+        data = bad_data
+    return JsonResponse(data, status = 400)
+
+@csrf_exempt
+def longUrls(request):
+    data = {}
+    if request.method == 'POST':
+        requestData = JSONParser().parse(request)
+        invalid_urls = []
+        valid_urls = {}
+        short_urls = requestData['short_urls']
+        for url in short_urls:
+            splitUrl = url.split('/')
+            ur = []
+            for tt in splitUrl:
+                if tt != '' and tt != 'http:' and tt != 'https:':
+                    ur.append(tt)
+            splitUrl = ur
+            utl = splitUrl[1]
+            try:
+                shortUrl = Shorturl.objects.get(short_url = utl)
+                valid_urls[url] = shortUrl.long_url
+            except Shorturl.DoesNotExist:
+                invalid_urls.append(url)
+        if len(invalid_urls) > 0:
+            data =  {
+                    "invalid_urls" : invalid_urls,
+                    "status": "FAILED",
+                    "status_codes": ["SHORT_URLS_NOT_FOUND"]
+                }
+        else:
+            data = {
+                "long_urls": valid_urls,
+                "invalid_urls": [],
+                "status": "OK",
+                "status_codes": []
+            }
+        return JsonResponse(data, status = 200)
+    else:
+        data = bad_data
+    return JsonResponse(data, status = 400)
