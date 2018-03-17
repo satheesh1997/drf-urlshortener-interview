@@ -42,7 +42,7 @@ def shortUrl(request):
     else:
         data = bad_data
 
-    return JsonResponse(data, status = 400)
+    return JsonResponse(data, status = 404)
 
 
 @csrf_exempt
@@ -85,7 +85,7 @@ def longUrl(request):
         return JsonResponse(data, status = 200)
     else:
         data = bad_data
-    return JsonResponse(data, status = 400)
+    return JsonResponse(data, status = 404)
 
 
 @csrf_exempt
@@ -116,7 +116,7 @@ def countUrl(request):
         return JsonResponse(data, status = 200)
     else:
         data = bad_data
-    return JsonResponse(data, status = 400)
+    return JsonResponse(data, status = 404)
 
 
 @csrf_exempt
@@ -156,7 +156,7 @@ def shortUrls(request):
         return JsonResponse(data, status = 200)
     else:
         data = bad_data
-    return JsonResponse(data, status = 400)
+    return JsonResponse(data, status = 404)
 
 @csrf_exempt
 def longUrls(request):
@@ -195,4 +195,4 @@ def longUrls(request):
         return JsonResponse(data, status = 200)
     else:
         data = bad_data
-    return JsonResponse(data, status = 400)
+    return JsonResponse(data, status = 404)
