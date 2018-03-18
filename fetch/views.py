@@ -24,16 +24,25 @@ def shortUrl(request):
         long_url = requestData['long_url']
         if validateUrl(long_url):
             requestData['short_url'] = hashCode()
-            newUrl = Shorturlserializer(data = requestData)
-            if newUrl.is_valid():
-                newUrl.save()
+            try:
+                shortUrl = Shorturl.objects.get(long_url = long_url)
                 ret = {
-                    "short_url": 'http://'+request.META['HTTP_HOST']+'/'+requestData['short_url']+'/',
-                    "status": "OK",
-                    "status_codes": []
-                    
+                        "short_url": 'http://'+request.META['HTTP_HOST']+'/'+shortUrl.short_url+'/',
+                        "status": "OK",
+                        "status_codes": []
+                        
                 }
-                return JsonResponse(ret, status = 200)
+            except Shorturl.DoesNotExist:
+                newUrl = Shorturlserializer(data = requestData)
+                if newUrl.is_valid():
+                    newUrl.save()
+                    ret = {
+                        "short_url": 'http://'+request.META['HTTP_HOST']+'/'+requestData['short_url']+'/',
+                        "status": "OK",
+                        "status_codes": []
+                        
+                    }
+            return JsonResponse(ret, status = 200)
         else:
             data = {
                 "status": "FAILED",
@@ -139,14 +148,18 @@ def shortUrls(request):
         else:
             for url in long_urls:
                 smallurl = hashCode()
-                sd = {
-                    'long_url': url,
-                    'short_url': smallurl
-                }
-                newUrl = Shorturlserializer(data = sd)
-                if newUrl.is_valid():
-                    newUrl.save()
-                    valid_urls[url] = 'http://'+request.META['HTTP_HOST']+'/'+smallurl+'/'
+                try:
+                    shortUrl = Shorturl.objects.get(long_url = url)
+                    valid_urls[url] = 'http://'+request.META['HTTP_HOST']+'/'+shortUrl.short_url+'/'
+                except Shorturl.DoesNotExist:
+                    sd = {
+                        'long_url': url,
+                        'short_url': smallurl
+                    }
+                    newUrl = Shorturlserializer(data = sd)
+                    if newUrl.is_valid():
+                        newUrl.save()
+                        valid_urls[url] = 'http://'+request.META['HTTP_HOST']+'/'+smallurl+'/'
             data = {
                 "short_urls": valid_urls,
                 "invalid_urls" : [],

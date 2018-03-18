@@ -13,15 +13,14 @@ def validateUrl(url):
     splitUrl = ur
     if len(splitUrl) < 2:
         return False
-    try:
-        request = requests.get(url)
-        if request.status_code != 200:
-            return False
-    except:
+    good_codes = [
+        200,
+        302
+    ]
+    if requests.head(url).status_code not in good_codes:
         return False
     return True
     
-
 def hashCode(code=None):
     chars=string.ascii_lowercase + string.digits
 
@@ -30,7 +29,8 @@ def hashCode(code=None):
     else:
         try:
             st = Shorturl.objects.get(short_url=code)
-            return hashCode(code=None)
         except Shorturl.DoesNotExist:
             return code
+        if st:
+            return hashCode(code=None)
     return hashCode(code)
