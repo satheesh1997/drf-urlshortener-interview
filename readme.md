@@ -199,3 +199,34 @@ This API will clear the database of all the previous test data. This needs to be
 
     OK - Request executed successfully
     FAILED - Request failed
+
+
+### Requirements
+1. Django 2.0
+2. Python3
+
+### Installation
+
+	git clone https://github.com/satheesh1997/Url-Shortener.git
+ 
+ 
+ clone the project to a folder and move to that folder
+ 
+ 	cd <folder_name>
+    
+  Install the requirements
+  
+ 	 pip install -r requirements.txt
+     
+  Migrate the database and start the server
+  
+  	python3 manage.py makemigrations && python3 manage.py migrate
+    
+  Start the Server
+  
+  	python3 manage.py runserver
+    
+    
+  --
+  
+  Server will running on port 8000.
