@@ -207,7 +207,7 @@ This API will clear the database of all the previous test data. This needs to be
 
 ### Installation
 
-	git clone https://github.com/satheesh1997/Url-Shortener.git
+	git clone https://github.com/satheesh1997/drf-urlshortener-interview.git
  
  
  clone the project to a folder and move to that folder
